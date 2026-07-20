@@ -1,5 +1,7 @@
 # qa-agent
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 An agentic QA tool: point it at any repo, it explores the code, writes automated tests
 in the idiomatic framework for whatever language(s) it finds, writes a manual test-case
 checklist for things automation can't judge well, runs the automated suite, iterates on

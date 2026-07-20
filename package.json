@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Agentic code-testing agent: generates manual test docs + automated tests, runs them, iterates on failures, and reports results.",
   "type": "module",
+  "license": "MIT",
   "bin": {
     "qa-agent": "./dist/cli.js"
   },
