@@ -1,0 +1,60 @@
+name: QA Agent
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  qa-agent:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Install the target repo's own toolchains as needed so run_command
+      # (npm test / pytest / go test / etc.) actually works. Add steps here
+      # per-stack as this repo's needs grow, e.g. setup-python, setup-go.
+      - name: Install target repo dependencies
+        run: |
+          if [ -f package.json ]; then npm ci; fi
+
+      - name: Install qa-agent
+        run: |
+          git clone --depth 1 https://github.com/YOUR_ORG/qa-agent.git /tmp/qa-agent
+          cd /tmp/qa-agent && npm ci && npm run build
+
+      - name: Run QA agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node /tmp/qa-agent/dist/cli.js "${{ github.workspace }}" --output-dir qa-agent-output
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-agent-report
+          path: qa-agent-output/
+
+      - name: Comment on PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'qa-agent-output/qa-agent-report.md';
+            if (!fs.existsSync(path)) return;
+            let body = fs.readFileSync(path, 'utf8');
+            if (body.length > 60000) body = body.slice(0, 60000) + '\n...[truncated, see artifact]';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });

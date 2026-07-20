@@ -1,0 +1,27 @@
+{
+  "name": "qa-agent",
+  "version": "0.1.0",
+  "description": "Agentic code-testing agent: generates manual test docs + automated tests, runs them, iterates on failures, and reports results.",
+  "type": "module",
+  "bin": {
+    "qa-agent": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/cli.js",
+    "dev": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "commander": "^12.1.0",
+    "fast-glob": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
