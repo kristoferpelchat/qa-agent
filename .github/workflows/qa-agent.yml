@@ -27,7 +27,7 @@ jobs:
 
       - name: Install qa-agent
         run: |
-          git clone --depth 1 https://github.com/YOUR_ORG/qa-agent.git /tmp/qa-agent
+          git clone --depth 1 https://github.com/kristoferpelchat/qa-agent.git /tmp/qa-agent
           cd /tmp/qa-agent && npm ci && npm run build
 
       - name: Run QA agent
